@@ -1,7 +1,7 @@
-package com.upiiz.Practica2.services;
+package com.upiiz.plantillas.Services;
 
-import com.upiiz.Practica2.entities.Transaccion;
-import com.upiiz.Practica2.repositories.TransaccionRepository;
+import com.upiiz.plantillas.entities.Transaccion;
+import com.upiiz.plantillas.repositories.TransaccionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

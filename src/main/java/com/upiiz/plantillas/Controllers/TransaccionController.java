@@ -1,59 +1,64 @@
 package com.upiiz.plantillas.Controllers;
 
-import com.upiiz.Practica2.entities.Transaccion;
-import com.upiiz.Practica2.services.CuentaService;
-import com.upiiz.Practica2.services.TransaccionService;
+import com.upiiz.plantillas.entities.Cuenta;
+import com.upiiz.plantillas.entities.Transaccion;
+import com.upiiz.plantillas.Services.CuentaService;
+import com.upiiz.plantillas.Services.TransaccionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/transacciones")
 public class TransaccionController {
-
     @Autowired
     private TransaccionService transaccionService;
 
     @Autowired
     private CuentaService cuentaService;
 
-    // 5. Pagina - Listado de la tabla secundaria
+    // 1. Listado de transacciones
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("transacciones", transaccionService.listarTodas());
-        model.addAttribute("usuarioLogueado", "Luis Daniel"); // Requisito visual
+        model.addAttribute("usuarioLogueado", "Luis Daniel");
         return "transacciones/listado";
     }
 
-    // 6. Pagina - Agregar registro a la tabla secundaria
+    // 2. Formulario para registro INDIVIDUAL de transacción
+    // Acceso: /transacciones/nuevo
     @GetMapping("/nuevo")
-    public String formularioNuevo(Model model) {
+    public String mostrarFormulario(Model model) {
+        model.addAttribute("cuentas", cuentaService.listarTodas());
         model.addAttribute("transaccion", new Transaccion());
-        // Necesitamos la lista de cuentas para el selector (Foreign Key)
-        model.addAttribute("cuentas", cuentaService.listarTodas());
+        model.addAttribute("usuarioLogueado", "Luis Daniel");
         return "transacciones/formulario";
     }
 
-    // 7. Pagina - Actualizar registros
-    @GetMapping("/editar/{id}")
-    public String formularioEditar(@PathVariable Long id, Model model) {
-        model.addAttribute("transaccion", transaccionService.obtenerPorId(id));
-        model.addAttribute("cuentas", cuentaService.listarTodas());
-        return "transacciones/formulario";
-    }
-
-    // Guardar cambios
+    // 3. Guardar transacción individual
     @PostMapping("/guardar")
     public String guardar(@ModelAttribute Transaccion transaccion) {
         transaccionService.guardar(transaccion);
         return "redirect:/transacciones";
     }
 
-    // 8. Pagina - Eliminar registro
-    @GetMapping("/eliminar/{id}")
-    public String eliminar(@PathVariable Long id) {
-        transaccionService.eliminar(id);
-        return "redirect:/transacciones";
+    // 4. Procesa la transferencia entre dos cuentas
+    // Acceso: /transacciones/transferir
+    @PostMapping("/transferir")
+    public String realizarTransferencia(@RequestParam Long idOrigen,
+                                        @RequestParam Long idDestino,
+                                        @RequestParam Double monto) {
+        cuentaService.transferir(idOrigen, idDestino, monto);
+        return "redirect:/cuentas";
+    }
+
+    // 5. Estadísticas
+    @GetMapping("/estadisticas")
+    public String verEstadisticas(Model model) {
+        model.addAttribute("cuentas", cuentaService.listarTodas());
+        return "transacciones/estadisticas";
     }
 }

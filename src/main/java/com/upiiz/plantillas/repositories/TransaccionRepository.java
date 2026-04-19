@@ -1,6 +1,6 @@
-package com.upiiz.Practica2.repositories;
+package com.upiiz.plantillas.repositories;
 
-import com.upiiz.Practica2.entities.Transaccion;
+import com.upiiz.plantillas.entities.Transaccion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

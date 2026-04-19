@@ -24,9 +24,9 @@
     <div class="card-body register-card-body">
       <p class="login-box-msg">Registra un nuevo usuario</p>
 
-      <form th:action="@{/cuentas}" method="get">
+      <form th:action="@{/auth/register}" method="post">
         <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Nombre completo">
+          <input type="text" name="titular" class="form-control" placeholder="Nombre completo">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-user"></span>
@@ -34,7 +34,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="email" class="form-control" placeholder="Email">
+          <input type="email" name="email" class="form-control" placeholder="Email">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
@@ -42,7 +42,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="Contraseña">
+          <input type="password" name="password" class="form-control" placeholder="Contraseña">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
@@ -71,6 +71,11 @@
             <button type="submit" class="btn btn-primary btn-block">Registrar</button>
           </div>
           <!-- /.col -->
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+          <h5><i class="icon fas fa-ban"></i> ¡Error!</h5>
+          <p th:text="${error}"></p>
         </div>
       </form>
 

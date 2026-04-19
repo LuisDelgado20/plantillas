@@ -26,15 +26,16 @@
 
       <form th:action="@{/auth/login}" method="post">
         <div class="input-group mb-3">
-          <input type="email" class="form-control" placeholder="Boleta">
+          <input type="email" name="email" class="form-control" placeholder="Email" required>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
             </div>
           </div>
         </div>
+
         <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="Password">
+          <input type="password" name="password" class="form-control" placeholder="Password" required>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
@@ -54,10 +55,18 @@
           <div class="row">
             <div class="col-12">
               <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+
             </div>
+          </div>
+          <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
           <!-- /.col -->
         </div>
+
       </form>
 
 <!--      <div class="social-auth-links text-center mb-3">-->
@@ -73,6 +82,9 @@
 
       <p class="mb-1">
         <a th:href="@{/auth/forgot-password}" class="text-center">Olvide mi contraseña</a>
+      </p>
+      <p class="mb-1">
+        <a th:href="@{/auth/recover-password}" class="text-center">Actualizar mi contraseña</a>
       </p>
       <p class="mb-0">
         <a th:href="@{/auth/register}" class="text-center">Registrarme</a>

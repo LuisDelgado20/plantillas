@@ -1,10 +1,16 @@
 package com.upiiz.plantillas.Controllers;
 
-import com.upiiz.Practica2.services.CuentaService;
+import com.upiiz.plantillas.Services.CuentaService;
+import com.upiiz.plantillas.Services.MovimientoService;
+import com.upiiz.plantillas.entities.Cuenta;
+import com.upiiz.plantillas.entities.Movimiento;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 @Controller
 public class EstadisticasController {
@@ -12,12 +18,37 @@ public class EstadisticasController {
     @Autowired
     private CuentaService cuentaService;
 
-    @GetMapping("/estadisticas")
-    public String verEstadisticas(Model model) {
-        // En un caso real, aquí calcularías los totales desde la BD
-        // model.addAttribute("totalCuentas", cuentaService.contar());
+    @Autowired
+    private MovimientoService movimientoService; // Faltaba esta inyección
 
-        model.addAttribute("usuarioLogueado", "Luis"); // Requisito de tu imagen
-        return "estadisticas";
+    @GetMapping("/estadisticas")
+    public String mostrarEstadisticas(Model model, HttpSession session) {
+        String nombreLogueado = (String) session.getAttribute("usuarioLogueado");
+
+        if (nombreLogueado == null) {
+            return "redirect:/auth/login";
+        }
+
+        Cuenta cuentaUsuario = cuentaService.buscarPorTitular(nombreLogueado);
+
+        if (cuentaUsuario != null) {
+            List<Movimiento> misMovimientos = movimientoService.buscarPorCuentaId(cuentaUsuario.getId());
+
+            double entradas = misMovimientos.stream()
+                    .filter(m -> m.getTipo().equalsIgnoreCase("Entrada"))
+                    .mapToDouble(m -> m.getMonto().doubleValue()).sum();
+
+            double salidas = misMovimientos.stream()
+                    .filter(m -> m.getTipo().equalsIgnoreCase("Salida"))
+                    .mapToDouble(m -> m.getMonto().doubleValue()).sum();
+
+            model.addAttribute("movimientos", misMovimientos);
+            model.addAttribute("totalEntradas", entradas);
+            model.addAttribute("totalSalidas", salidas);
+            model.addAttribute("saldoActual", cuentaUsuario.getSaldo());
+            model.addAttribute("usuarioLogueado", nombreLogueado);
+        }
+
+        return "estadisticas/ver"; // Asegúrate de que esta sea la ruta de tu HTML
     }
 }
